@@ -1,9 +1,13 @@
+import React from 'react';
+import { Blog } from './pages/Blog';
+import './App.css';
+
 function App() {
 
   return (
-    <>
-      <main></main>
-    </>
+    <div className="app">
+      <Blog />
+    </div>
   );
 }
 
