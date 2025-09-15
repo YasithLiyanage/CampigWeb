@@ -1,15 +1,22 @@
+// App.jsx
 import React from 'react';
-import { Home } from './pages/Home';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Home } from './pages/home/Home';
+import { RentalList } from './pages/RentalList/RentalList';
+import { RentalProvider } from './context/RentalContext';
 import './index.css';
 
 function App() {
-
   return (
-    <>
-      <Home />
-      
-    </>
+    <RentalProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/rental-list" element={<RentalList />} />
+        </Routes>
+      </Router>
+    </RentalProvider>
   );
 }
 
-export default App
+export default App;
