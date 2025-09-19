@@ -1,0 +1,253 @@
+/* components/auth/SessionManager.css */
+.session-manager {
+  background-color: #242424;
+  border-radius: 12px;
+  border: 1px solid #404040;
+  padding: 24px;
+}
+
+.session-manager.confirm-revoke {
+  text-align: center;
+}
+
+.session-manager h3 {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.revoke-all-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.revoke-all-btn:hover {
+  color: #dc2626;
+}
+
+.sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.session-item {
+  background-color: #404040;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.session-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.session-device {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.device-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #1A1A1A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8BE13B;
+  flex-shrink: 0;
+}
+
+.tablet-icon {
+  transform: rotate(90deg);
+}
+
+.session-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-browser {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.browser-name {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.current-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background-color: #22c55e;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 12px;
+}
+
+.session-location {
+  color: #9ca3af;
+  font-size: 12px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.revoke-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.revoke-btn:hover {
+  color: #ef4444;
+}
+
+.revoke-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mini-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #9ca3af;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.session-last-active {
+  color: #9ca3af;
+  font-size: 12px;
+  margin: 0;
+}
+
+.no-sessions {
+  text-align: center;
+  padding: 32px;
+}
+
+.no-sessions p {
+  color: #9ca3af;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Confirm revoke all styles */
+.session-manager.confirm-revoke p {
+  color: #d1d5db;
+  font-size: 14px;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-secondary {
+  padding: 8px 16px;
+  background-color: transparent;
+  color: #d1d5db;
+  border: 1px solid #6b7280;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #404040;
+  border-color: #8BE13B;
+  color: #8BE13B;
+}
+
+.btn-danger {
+  padding: 8px 16px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .session-manager {
+    padding: 16px;
+  }
+  
+  .session-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .session-device {
+    gap: 8px;
+  }
+  
+  .device-icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .session-location {
+    white-space: normal;
+  }
+  
+  .confirm-actions {
+    flex-direction: column;
+  }
+}

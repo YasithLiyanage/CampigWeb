@@ -1,8 +1,16 @@
 /* index.css */
+
+/* CSS Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* Base HTML and Body Styles */
+html {
+  height: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -14,8 +22,64 @@ body {
   background-color: #1A1A1A;
   color: #ffffff;
   line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
+/* Root Element */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Links */
+a {
+  color: #8BE13B;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #a3e635;
+}
+
+/* Form Elements */
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Lists */
+ul, ol {
+  list-style: none;
+}
+
+/* Home Container Integration */
 .home-container {
   display: flex;
   flex-direction: column;
@@ -36,6 +100,9 @@ body {
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
 }
 
 .btn-primary:hover {
@@ -52,6 +119,9 @@ body {
   border: 2px solid white;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
 }
 
 .btn-secondary:hover {
@@ -116,5 +186,97 @@ body {
   
   .grid-cols-lg-4 {
     grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1A1A1A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8BE13B;
+}
+
+/* Focus Styles for Accessibility */
+*:focus {
+  outline: 2px solid #8BE13B;
+  outline-offset: 2px;
+}
+
+/* Smooth Transitions */
+* {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Text Selection */
+::selection {
+  background-color: #8BE13B;
+  color: #1A1A1A;
+}
+
+::-moz-selection {
+  background-color: #8BE13B;
+  color: #1A1A1A;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    border: 1px solid black;
+    background: transparent;
+    color: black;
+  }
+}
+
+/* Dark Mode Support (default) */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1A1A1A;
+    color: #ffffff;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  body {
+    background-color: #000000;
+    color: #ffffff;
+  }
+  
+  .btn-primary {
+    border: 2px solid #8BE13B;
+  }
+  
+  .btn-secondary {
+    border: 2px solid #ffffff;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
   }
 }
