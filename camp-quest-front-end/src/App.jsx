@@ -1,21 +1,6 @@
-// import React from 'react';
-// import { Blog } from './pages/Blog';
-// import './App.css';
-
-// function App() {
-
-//   return (
-//     <div className="app">
-//       <Blog />
-//     </div>
-//   );
-// }
-
-// export default App
-
-
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Home } from './pages/Home';
 import { Blog } from './pages/Blog';
 import { AddBlog } from './pages/AddBlog';
 import { EditBlog } from './pages/EditBlog';
@@ -29,7 +14,7 @@ function App() {
       <BrowserRouter>
         <NavBar />
         <Routes>
-          <Route path="/" element={<Blog />} />
+          <Route path="/" element={<Home />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogDetails />} />
           <Route path="/blog/add" element={<AddBlog />} />

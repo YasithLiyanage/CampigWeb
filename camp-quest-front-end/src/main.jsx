@@ -1,19 +1,13 @@
+import React from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import "./index.css";
 
-// import React from 'react';
-// import { createRoot } from 'react-dom/client';
-// import { AppRouter } from './AppRouter';
-// import './index.css';
-
-// const container = document.getElementById('root');
-// const root = createRoot(container);
-// root.render(<AppRouter />);
-
-
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './App';
-import './index.css';
-
-const container = document.getElementById('root');
+const container = document.getElementById("root");
 const root = createRoot(container);
-root.render(<App />);
+
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
