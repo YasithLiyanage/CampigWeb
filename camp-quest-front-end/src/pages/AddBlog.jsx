@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Upload } from 'lucide-react';
 import './AddBlog.css';
+import { api } from '../services/api';
 
 export function AddBlog() {
   const navigate = useNavigate();
@@ -11,6 +12,9 @@ export function AddBlog() {
     content: '',
     imageUrl: '',
   });
+  const [featuredImage, setFeaturedImage] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,12 +24,26 @@ export function AddBlog() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically save the blog post to your backend
-    console.log('Blog post to be saved:', blogPost);
-    // For now, just navigate back to the blog page
-    navigate('/blog');
+    try {
+      setSubmitting(true);
+      setError('');
+      const payload = {
+        title: blogPost.title,
+        category: blogPost.category,
+        content: blogPost.content,
+        imageUrl: blogPost.imageUrl,
+        isPublished: true,
+      };
+      if (featuredImage) payload.featuredImage = featuredImage;
+      await api.createBlog(payload);
+      navigate('/blog');
+    } catch (err) {
+      setError(err.message || 'Failed to publish blog');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
@@ -46,6 +64,11 @@ export function AddBlog() {
       <div className="add-blog-container">
         <div className="add-blog-form-container">
           <form onSubmit={handleSubmit}>
+            {!!error && (
+              <div className="form-error" role="alert" style={{ color: 'crimson', marginBottom: '12px' }}>
+                {error}
+              </div>
+            )}
             <div className="form-group">
               <label htmlFor="title" className="form-label">
                 Title
@@ -106,9 +129,15 @@ export function AddBlog() {
                   <p className="upload-text">
                     Upload a featured image for your blog
                   </p>
-                  <button type="button" className="upload-button">
+                  <label className="upload-button" style={{ cursor: 'pointer' }}>
                     Select Image
-                  </button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={(e) => setFeaturedImage(e.target.files?.[0] || null)}
+                    />
+                  </label>
                 </div>
               </div>
               <div className="url-input-section">
@@ -132,8 +161,8 @@ export function AddBlog() {
               >
                 Cancel
               </button>
-              <button type="submit" className="submit-button">
-                Publish Blog
+              <button type="submit" className="submit-button" disabled={submitting}>
+                {submitting ? 'Publishing...' : 'Publish Blog'}
               </button>
             </div>
           </form>

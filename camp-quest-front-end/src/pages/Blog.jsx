@@ -3,105 +3,7 @@ import { BlogCard } from '../components/BlogCard';
 import { Plus, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './Blog.css';
-
-// Blog post data
-const initialBlogPosts = [
-  {
-    id: '1',
-    title: 'Top 10 Essential Camping Gear for Beginners',
-    imageUrl:
-      'https://uploadthingy.s3.us-west-1.amazonaws.com/9SZfwKUZLQ3qAKhXGxFR7g/camp.jpg',
-    category: 'Gear Reviews',
-    date: '15/06/2023',
-    excerpt:
-      'Camping is a wonderful way to enjoy nature and disconnect from the hustle and bustle of everyday life.',
-    reactions: {
-      likes: 24,
-      loves: 12,
-      smiles: 8,
-      stars: 15,
-    },
-  },
-  {
-    id: '2',
-    title: 'How to Choose the Perfect Campsite',
-    imageUrl:
-      'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    category: 'Camping Tips',
-    date: '02/07/2023',
-    excerpt:
-      'Selecting the right campsite can make or break your camping experience.',
-    reactions: {
-      likes: 18,
-      loves: 7,
-      smiles: 4,
-      stars: 9,
-    },
-  },
-  {
-    id: '3',
-    title: 'Campfire Cooking: 5 Easy Recipes for Your Next Trip',
-    imageUrl:
-      'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    category: 'Camping Recipes',
-    date: '20/07/2023',
-    excerpt: "There's something magical about cooking over an open fire.",
-    reactions: {
-      likes: 32,
-      loves: 21,
-      smiles: 14,
-      stars: 18,
-    },
-  },
-  {
-    id: '4',
-    title: 'Best Mountain Camping Destinations in the US',
-    imageUrl:
-      'https://images.unsplash.com/photo-1533873984035-25970ab07461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    category: 'Destinations & Locations',
-    date: '05/08/2023',
-    excerpt:
-      'Discover the most breathtaking mountain camping spots across the United States.',
-    reactions: {
-      likes: 42,
-      loves: 28,
-      smiles: 12,
-      stars: 23,
-    },
-  },
-  {
-    id: '5',
-    title: 'Camping 101: Everything You Need to Know Before Your First Trip',
-    imageUrl:
-      'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    category: 'Beginner Guides',
-    date: '12/06/2023',
-    excerpt:
-      'A complete step-by-step guide for first-time campers to ensure an enjoyable outdoor experience.',
-    reactions: {
-      likes: 56,
-      loves: 34,
-      smiles: 19,
-      stars: 27,
-    },
-  },
-  {
-    id: '6',
-    title: 'The Ultimate Sleeping Bag Comparison',
-    imageUrl:
-      'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    category: 'Gear Reviews',
-    date: '30/07/2023',
-    excerpt:
-      'We tested 15 different sleeping bags to find the best options for every season and budget.',
-    reactions: {
-      likes: 38,
-      loves: 15,
-      smiles: 7,
-      stars: 21,
-    },
-  },
-];
+import { api } from '../services/api';
 
 // Category definitions with descriptions
 const categories = [
@@ -141,25 +43,73 @@ const categories = [
 export function Blog() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [blogPosts, setBlogPosts] = useState(initialBlogPosts);
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const isAdmin = React.useMemo(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('admin') === '1';
+    } catch {
+      return false;
+    }
+  }, []);
+
+  // Fetch blogs from backend once when component mounts
+  const fetchBlogs = React.useCallback(async () => {
+    let cancelled = false;
+    try {
+      setLoading(true);
+      setError('');
+      const params = {};
+      if (searchTerm) params.search = searchTerm;
+      if (selectedCategory && selectedCategory !== 'all') params.category = selectedCategory;
+      params.published = isAdmin ? 'all' : 'true';
+      const res = await api.getBlogs(params);
+      if (cancelled) return;
+      const items = Array.isArray(res?.data) ? res.data : [];
+      setBlogPosts(items);
+    } catch (e) {
+      if (!cancelled) setError(e.message || 'Failed to load blogs');
+    } finally {
+      if (!cancelled) setLoading(false);
+    }
+    return () => { cancelled = true; };
+  }, [searchTerm, selectedCategory, isAdmin]);
+
+  React.useEffect(() => {
+    let dispose = () => {};
+    fetchBlogs().then((d) => { if (typeof d === 'function') dispose = d; });
+    return () => dispose();
+  }, [fetchBlogs]);
 
   // Handle reactions
-  const handleReaction = (blogId, reactionType) => {
-    setBlogPosts((prevPosts) =>
-      prevPosts.map((post) => {
-        if (post.id === blogId) {
-          return {
-            ...post,
-            reactions: {
-              ...post.reactions,
-              [reactionType]: post.reactions[reactionType] + 1,
-            },
-          };
-        }
-        return post;
-      }),
-    );
+  const handleReaction = async (blogId, reactionType) => {
+    try {
+      const res = await api.reactToBlog(blogId, reactionType);
+      const newReactions = res?.reactions;
+      setBlogPosts((prev) => prev.map((p) => (
+        (p._id === blogId || p.id === blogId)
+          ? { ...p, reactions: newReactions || p.reactions }
+          : p
+      )));
+    } catch (e) {
+      console.error('Failed to react:', e);
+    }
+  };
+
+  // Handle delete
+  const handleDelete = async (id) => {
+    const ok = window.confirm('Are you sure you want to delete this blog?');
+    if (!ok) return;
+    try {
+      await api.deleteBlog(id);
+      await fetchBlogs();
+    } catch (e) {
+      console.error('Failed to delete blog:', e);
+      alert(e.message || 'Failed to delete blog');
+    }
   };
 
   // Filter blogs based on search term and category
@@ -192,6 +142,12 @@ export function Blog() {
       </div>
 
       <div className="blog-container">
+        {loading && (
+          <div className="no-results"><p>Loading blogs...</p></div>
+        )}
+        {!!error && (
+          <div className="no-results"><p>{error}</p></div>
+        )}
         <div className="blog-controls">
           <div className="search-container">
             <input
@@ -227,13 +183,15 @@ export function Blog() {
                 </option>
               ))}
             </select>
-            <button
-              className="add-blog-btn"
-              onClick={() => navigate('/blog/add')}
-            >
-              <Plus size={20} />
-              <span>Add New Blog</span>
-            </button>
+            {isAdmin && (
+              <button
+                className="add-blog-btn"
+                onClick={() => navigate('/blog/add')}
+              >
+                <Plus size={20} />
+                <span>Add New Blog</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -245,15 +203,16 @@ export function Blog() {
           <div className="blog-grid">
             {filteredBlogs.map((blog) => (
               <BlogCard
-                key={blog.id}
-                id={blog.id}
+                key={blog._id || blog.id}
+                id={blog._id || blog.id}
                 title={blog.title}
-                imageUrl={blog.imageUrl}
+                imageUrl={blog.featuredImage ? `${api.baseUrl}${blog.featuredImage}` : (blog.imageUrl || '')}
                 category={blog.category}
-                date={blog.date}
-                excerpt={blog.excerpt}
-                reactions={blog.reactions}
-                onReact={handleReaction}
+                date={blog.formattedDate || (blog.publishDate ? new Date(blog.publishDate).toLocaleDateString('en-US') : '')}
+                excerpt={blog.excerpt || ''}
+                author={blog.author || 'Admin'}
+                reactions={blog.reactions || { likes: 0, loves: 0, smiles: 0, stars: 0 }}
+                {...(isAdmin ? { onEdit: (id) => navigate(`/blog/edit/${id}`, { state: { blog } }), onDelete: handleDelete } : {})}
               />
             ))}
           </div>
